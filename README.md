@@ -8,13 +8,13 @@
 
 ## How to running application
 
-How to running streamlit frontend (running the code below inside `FRONT_END_STREAMLIT/frontend.py`)
+How to running streamlit frontend, running the code below inside `FRONT_END_STREAMLIT/frontend.py`
 
 ```sh
 streamlit run frontend.py
 ```
 
-How to running FastAPI backend (running the code below inside `BACK_END_FASTAPI/backend.py`)
+How to running FastAPI backend, running the code below inside `BACK_END_FASTAPI/backend.py`
 
 ```sh
 uvicorn backend:app --reload
@@ -52,4 +52,7 @@ torch
 tqdm
 torchvision
 scikit-image
+gdal
 ```
+
+for gdal library sometimes error problem so I provide the wheel inside folder `BACK_END_FASTAPI\gdal (library import gdal)/GDAL-3.4.3-cp39-cp39-win_amd64.whl`
