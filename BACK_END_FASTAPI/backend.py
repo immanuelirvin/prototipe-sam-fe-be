@@ -17,13 +17,10 @@ from fastapi import BackgroundTasks
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import io
-import os
+from datetime import datetime
 
 # VARIABLES
-current_dir = os.path.dirname(os.path.abspath(__file__))
-REGULARIZATION_FOLDER_PATH = f"{current_dir}/projectRegularization/test_data/"
-
-print("asdasd:",REGULARIZATION_FOLDER_PATH)
+REGULARIZATION_FOLDER_PATH = "projectRegularization/test_data/"
 REGULARIZATION_RGB = REGULARIZATION_FOLDER_PATH+"rgb/"
 REGULARIZATION_MASK = REGULARIZATION_FOLDER_PATH+"seg/"
 REGULARIZATION_OUTPUT = REGULARIZATION_FOLDER_PATH+"reg_output/"
@@ -40,6 +37,7 @@ class OutputBase(BaseModel):
 class Db_Input(BaseModel):
     total_area : float
     gsr : float
+    centroid : str
 
 app = FastAPI()
 
@@ -67,6 +65,14 @@ def overlay_images(image, overlay_image, alpha=0.5):
     
     return overlaid_image
 
+# def iter_file(file_location):
+#     with open(file_location, "rb") as f:
+#         while True:
+#             chunk = f.read(1024 * 1024)
+#             if not chunk:
+#                 break
+#             yield chunk
+
 @app.post("/show_input_image")
 def show_input_image(tif_file: UploadFile = File(...)):
     # Upload Local FastAPI BackEnd
@@ -76,6 +82,16 @@ def show_input_image(tif_file: UploadFile = File(...)):
     # Read the uploaded TIFF file
     with open(REGULARIZATION_RGB+IMAGE_NAME, "rb") as f:
         tiff_data = f.read()
+        print(f"result: {tiff_data}")
+    
+    # Define a generator to read the file in chunks
+    def iter_file():
+        with open(REGULARIZATION_RGB+IMAGE_NAME, "rb") as f:
+            while True:
+                chunk = f.read(1024 * 1024)  # Read in 1MB chunks
+                if not chunk:
+                    break
+                yield chunk
 
     # Return the TIFF data as a streaming response
     return StreamingResponse(iter([tiff_data]), media_type="image/tiff")
@@ -125,8 +141,8 @@ def get_total_area():
     gdf['area'] = gdf.geometry.area
 
     # Print the GeoDataFrame with the new 'area' column
-    print("GeoDataFrame with Areas:")
-    print(gdf)
+    # print("GeoDataFrame with Areas:")
+    # print(gdf)
 
     # Calculate the total sum of the areas
     total_area = gdf['area'].sum()
@@ -222,7 +238,10 @@ def estimate_photovoltaic_electric(input : Db_Input):
     conn = connect_db_cloud()
     cursor = conn.cursor()
     # Define the SQL INSERT statement dynamically with parameters
-    insert_data_sql = f"INSERT INTO history (total_area, gsr, energy) VALUES ('{input.total_area}', '{input.gsr}', '{Energy}');"
+    current_time = datetime.now()
+    # Convert current timestamp to string in the format accepted by PostgreSQL
+    formatted_time = current_time.strftime('%Y-%m-%d %H:%M:%S')
+    insert_data_sql = f"INSERT INTO history (total_area, gsr, energy, date_in, centroid) VALUES ('{input.total_area}', '{input.gsr}', '{Energy}', '{formatted_time}','{input.centroid}');"
 
     # Execute the SQL statement with parameters
     cursor.execute(insert_data_sql)
@@ -245,7 +264,7 @@ def get_all_data():
     conn = connect_db_cloud()
     cursor = conn.cursor()
     
-    cursor.execute("SELECT * FROM history;")
+    cursor.execute("SELECT * FROM history ORDER BY date_in DESC;")
     data = cursor.fetchall()
     
     cursor.close()

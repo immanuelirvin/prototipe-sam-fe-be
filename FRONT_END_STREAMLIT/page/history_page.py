@@ -22,9 +22,10 @@ def list_all_history():
                 st.success("History in the Database")
                 # Convert data to a pandas DataFrame for better display
                 # remove id primary key, only get total area, gsr, energy
-                data_display = [[item[1], item[2], item[3]] for item in data]
+                data_display = [[item[1], item[2], item[3], item[4].replace('T', ' '), item[5]] for item in data]
+                
                 # Convert to DataFrame
-                df = pd.DataFrame(data_display, columns=["Total Area", "GSR Monthly", "Energy"], index=pd.RangeIndex(start=1, stop=len(data)+1))
+                df = pd.DataFrame(data_display, columns=["Total Area", "GSR Monthly", "Energy", "Date In", "Centroid"], index=pd.RangeIndex(start=1, stop=len(data)+1))
                 st.dataframe(df)
             else:
                 st.write("No data available.")
