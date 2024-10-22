@@ -8,9 +8,9 @@ https://youtu.be/GXrVs8SBLTU
 
 | Name | Link |
 | ------ | ------ |
-| Training UNET | https://colab.research.google.com/drive/1apZ_ONt5VLUbEXI-jWcDxdXlTDLlllLw?authuser=1#scrollTo=BrPNLCTVPwBE |
-| Training SAM | https://colab.research.google.com/drive/1SDHMyp0Ok9lzHXt0IU_r74JOwi9k9Bb4?authuser=1 |
-| Regularization Polygon | https://colab.research.google.com/drive/1zYUwW00G5N9FOCrAPJAcqQKD9-58AyzK?usp=sharing |
+| Training UNET | https://colab.research.google.com/drive/1apZ_ONt5VLUbEXI-jWcDxdXlTDLlllLw |
+| Training SAM | https://colab.research.google.com/drive/1SDHMyp0Ok9lzHXt0IU_r74JOwi9k9Bb4 |
+| Regularization Polygon | https://colab.research.google.com/drive/1zYUwW00G5N9FOCrAPJAcqQKD9-58AyzK |
 
 ## How to running application
 
